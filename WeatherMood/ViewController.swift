@@ -19,7 +19,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var moodOutputField: UILabel!
     @IBOutlet weak var weatherOutput: UILabel!
     let locationManager = CLLocationManager()
-
+    var currentLocation: CLLocation!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,23 +27,50 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         // Ask for location Authorisation from the User.
         self.locationManager.requestAlwaysAuthorization()
-        
         // For use in foreground
         self.locationManager.requestWhenInUseAuthorization()
         
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.startUpdatingLocation()
+        
+        if( CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
+            CLLocationManager.authorizationStatus() ==  .authorizedAlways){
+            currentLocation = locationManager.location
+            print(currentLocation.coordinate.longitude + currentLocation.coordinate.latitude)
         }
-    }
-    
-    private func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) -> (Int, Int)? {
-        guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return nil }
-        print("locations = \(locValue.latitude) \(locValue.longitude)")
-        return (Int(locValue.latitude), Int(locValue.longitude))
+                
     }
 
+
+    //got the user location
+//    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {
+//
+//        CLGeocoder().reverseGeocodeLocation(manager.location!, completionHandler: { (placemarks, error) in
+//            if (error != nil) {
+//                print("Reverse geocoder failed with error" + error!.localizedDescription)
+//                return
+//            }
+//
+//            if placemarks!.count > 0 {
+//                let pm = placemarks![0] as CLPlacemark
+//                // send location data
+//                self.displayLocationInfo(pm)
+//            } else {
+//                print("Problem with the data received from geocoder")
+//            }
+//        })
+//
+//    }
+//
+//    // user location access failed
+//    func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
+//        weatherOutput.text = "location access failed"
+//    }
+//
+//    func displayLocationInfo(_ placemark: CLPlacemark) {
+//            //stop updating location to save battery life
+//            locationManager.stopUpdatingLocation()
+//            print(placemark.location)
+//
+//    }
 
 }
 
